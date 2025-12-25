@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
+<title>Tap Counter</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        touch-action: manipulation; /* prevent double tap zoom */
+    }
+
+    body {
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #0f172a;
+        color: white;
+    }
+
+    .top-box {
+        position: fixed;
+        top: 15px;
+        background: #020617;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 18px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    .tap-btn {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: radial-gradient(circle at top, #38bdf8, #0284c7);
+        border: none;
+        color: white;
+        font-size: 22px;
+        font-weight: bold;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .tap-btn:active {
+        transform: scale(0.95);
+    }
+</style>
+</head>
+<body>
+
+<div class="top-box">
+    Total Taps: <span id="count">0</span>
+</div>
+
+<button class="tap-btn" id="tapBtn">TAP</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const countEl = document.getElementById("count");
+    const btn = document.getElementById("tapBtn");
+
+    btn.addEventListener("click", () => {
+        socket.emit("tap");
+    });
+
+    socket.on("update", (count) => {
+        countEl.textContent = count;
+    });
+
+    // extra safety for iOS zoom
+    document.addEventListener("gesturestart", e => e.preventDefault());
+</script>
+
+</body>
+</html>
